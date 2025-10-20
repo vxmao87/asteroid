@@ -8,6 +8,7 @@ class Player(CircleShape):
     def __init__(self, x, y):
         super().__init__(x, y, PLAYER_RADIUS)
         self.rotation = 0
+        self.shot_timer = 0
 
 
     # in the player class
@@ -32,6 +33,7 @@ class Player(CircleShape):
 
     # Changes the orientation of the player
     def update(self, dt):
+        self.shot_timer -= dt
         keys = pygame.key.get_pressed()
 
         if keys[pygame.K_LEFT]:
@@ -54,6 +56,11 @@ class Player(CircleShape):
     
     # Shoots a bullet
     def shoot(self):
+        # Prevents shooting if the cooldown is greater than 0
+        if self.shot_timer > 0:
+            return
+        
+        self.shot_timer = PLAYER_SHOOT_COOLDOWN
         player_shot = Shot(self.position.x, self.position.y)
         shot_velocity = pygame.Vector2(0, 1).rotate(self.rotation)
         player_shot.velocity = shot_velocity * PLAYER_SHOOT_SPEED
