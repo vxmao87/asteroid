@@ -1,8 +1,10 @@
+import sys
 import pygame
 from constants import *
 from player import Player
 from asteroid import Asteroid
 from asteroidfield import AsteroidField
+from circleshape import CircleShape
 
 
 def main():
@@ -15,18 +17,20 @@ def main():
     # Initialize timer
     timer = pygame.time.Clock()
 
-    # Create two groups to manage drawable and updatale objects
+    # Create groups to manage objects
     updatable = pygame.sprite.Group()
     drawable = pygame.sprite.Group()
-    Player.containers = (updatable, drawable)
-
-    # Create the Asteroid groups
     asteroids = pygame.sprite.Group()
+
+    # Create containers to group our objects
     Asteroid.containers = (asteroids, updatable, drawable)
     AsteroidField.containers = updatable
     asteroid_field = AsteroidField()
 
+    Player.containers = (updatable, drawable)
+
     player = Player(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2)
+
     dt = 0
     
     # Checks if the user has closed their window and exits the game if so
@@ -36,6 +40,12 @@ def main():
                 return
             
         updatable.update(dt)
+
+        # Check if any asteroids collide with the player. If so, game exits
+        for asteroid in asteroids:
+            if asteroid.collides_with(player):
+                print("Game over!")
+                sys.exit()
             
         screen.fill("black", rect=None, special_flags=0)
 
@@ -44,7 +54,7 @@ def main():
 
         pygame.display.flip()
 
-        # Limit framerate to 60FPS
+        # Limits framerate to 60FPS
         dt = timer.tick(60) / 1000
 
 
