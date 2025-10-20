@@ -48,6 +48,14 @@ def main():
             if asteroid.collides_with(player):
                 print("Game over!")
                 sys.exit()
+
+            # Check if any asteroids collide with any shots from the player, and reduce the sizes of the asteroids
+            # accordingly depending on size
+            for shot in shots:
+                if asteroid.collides_with(shot):
+                    asteroid.kill()
+                    shot.kill()
+                    asteroid.split()
             
         screen.fill("black", rect=None, special_flags=0)
 
